@@ -1,71 +1,135 @@
 import SwiftUI
 import RealityKit
 
-/// Full XR forest scene. Visuals update whenever intensity changes.
+/// Full-immersion XR forest. The real room disappears — user walks inside a forest.
+/// Vision Pro tracks physical movement so the user naturally walks through the scene.
 struct ImmersiveView: View {
     @EnvironmentObject var viewModel: FitnessSessionViewModel
 
     var body: some View {
         RealityView { content in
-            content.add(makeForestScene())
+            content.add(buildForest())
         } update: { content in
             applyIntensity(viewModel.intensity, to: content)
         }
     }
 
-    // MARK: - Procedural Forest Scene
+    // MARK: - Forest Scene Builder
 
-    private func makeForestScene() -> Entity {
+    private func buildForest() -> Entity {
         let root = Entity()
-
-        // Ground plane
-        let ground = ModelEntity(
-            mesh: .generatePlane(width: 20, depth: 20),
-            materials: [SimpleMaterial(
-                color: .init(red: 0.18, green: 0.42, blue: 0.18, alpha: 1),
-                isMetallic: false
-            )]
-        )
-        ground.position = [0, -1.6, 0]
-        root.addChild(ground)
-
-        // Ring of trees around the user
-        for i in 0..<10 {
-            let angle  = Float(i) * (.pi * 2 / 10)
-            let radius: Float = 6
-            root.addChild(makeTree(at: [cos(angle) * radius, -1.5, sin(angle) * radius]))
-        }
-
+        root.addChild(makeSkyDome())
+        root.addChild(makeGround())
+        root.addChild(makeTreeRing(count: 8,  radius: 4,  trunkHeight: 2.0, canopySize: 0.8))  // inner
+        root.addChild(makeTreeRing(count: 14, radius: 8,  trunkHeight: 3.0, canopySize: 1.2))  // middle
+        root.addChild(makeTreeRing(count: 20, radius: 14, trunkHeight: 4.5, canopySize: 1.8))  // outer
+        root.addChild(makeBushRing(count: 12, radius: 3))
+        root.addChild(makeAmbientLight())
         return root
     }
 
-    private func makeTree(at position: SIMD3<Float>) -> Entity {
-        let tree = Entity()
+    // MARK: - Scene Components
 
-        let trunk = ModelEntity(
-            mesh: .generateCylinder(height: 2.2, radius: 0.14),
-            materials: [SimpleMaterial(color: .brown, isMetallic: false)]
-        )
-        trunk.position = position + SIMD3(0, 1.1, 0)
+    /// Large inverted sphere — gives the forest a sky/canopy color overhead
+    private func makeSkyDome() -> Entity {
+        var material = UnlitMaterial()
+        material.color = .init(tint: .init(red: 0.15, green: 0.35, blue: 0.15, alpha: 1))
 
-        let canopy = ModelEntity(
-            mesh: .generateSphere(radius: 0.9),
+        let dome = ModelEntity(mesh: .generateSphere(radius: 50), materials: [material])
+        // Flip the sphere inside-out so the texture faces inward
+        dome.scale = SIMD3<Float>(-1, 1, 1)
+        dome.position = [0, 0, 0]
+        return dome
+    }
+
+    /// Large flat ground — green-brown forest floor
+    private func makeGround() -> Entity {
+        let ground = ModelEntity(
+            mesh: .generatePlane(width: 60, depth: 60),
             materials: [SimpleMaterial(
-                color: .init(red: 0.08, green: 0.38, blue: 0.08, alpha: 1),
+                color: .init(red: 0.22, green: 0.38, blue: 0.15, alpha: 1),
                 isMetallic: false
             )]
         )
-        canopy.position = [0, 1.4, 0]
+        // Position at floor level — adjust this value if the floor looks too high/low
+        ground.position = [0, -1.5, 0]
+        return ground
+    }
+
+    /// Generates a ring of trees at a given radius
+    private func makeTreeRing(count: Int, radius: Float, trunkHeight: Float, canopySize: Float) -> Entity {
+        let ring = Entity()
+        for i in 0..<count {
+            let angle = Float(i) * (.pi * 2 / Float(count))
+            // Slight random-feeling offset using index math (no random seed needed)
+            let radiusVariation = radius + Float(i % 3) * 0.6 - 0.3
+            let x = cos(angle) * radiusVariation
+            let z = sin(angle) * radiusVariation
+            ring.addChild(makeTree(
+                at: [x, -1.5, z],
+                trunkHeight: trunkHeight + Float(i % 3) * 0.4,
+                canopyRadius: canopySize + Float(i % 2) * 0.2
+            ))
+        }
+        return ring
+    }
+
+    private func makeTree(at position: SIMD3<Float>, trunkHeight: Float, canopyRadius: Float) -> Entity {
+        let tree = Entity()
+
+        let trunk = ModelEntity(
+            mesh: .generateCylinder(height: trunkHeight, radius: 0.12),
+            materials: [SimpleMaterial(color: .init(red: 0.35, green: 0.22, blue: 0.10, alpha: 1), isMetallic: false)]
+        )
+        trunk.position = position + SIMD3(0, trunkHeight / 2, 0)
+
+        let canopy = ModelEntity(
+            mesh: .generateSphere(radius: canopyRadius),
+            materials: [SimpleMaterial(
+                color: .init(red: 0.08, green: 0.40, blue: 0.10, alpha: 1),
+                isMetallic: false
+            )]
+        )
+        canopy.position = [0, trunkHeight / 2 + canopyRadius * 0.6, 0]
         trunk.addChild(canopy)
         tree.addChild(trunk)
         return tree
     }
 
-    // MARK: - Intensity visual update
+    /// Low bushes scattered near the user for depth
+    private func makeBushRing(count: Int, radius: Float) -> Entity {
+        let ring = Entity()
+        for i in 0..<count {
+            let angle = Float(i) * (.pi * 2 / Float(count)) + 0.3
+            let r = radius + Float(i % 4) * 0.5
+            let bush = ModelEntity(
+                mesh: .generateSphere(radius: 0.35 + Float(i % 3) * 0.1),
+                materials: [SimpleMaterial(
+                    color: .init(red: 0.10, green: 0.32, blue: 0.08, alpha: 1),
+                    isMetallic: false
+                )]
+            )
+            bush.position = [cos(angle) * r, -1.2, sin(angle) * r]
+            ring.addChild(bush)
+        }
+        return ring
+    }
+
+    /// Soft green ambient light — makes the forest feel lit from above
+    private func makeAmbientLight() -> Entity {
+        let light = Entity()
+        var component = DirectionalLightComponent()
+        component.color     = .init(red: 0.6, green: 0.9, blue: 0.5, alpha: 1)
+        component.intensity = 800
+        light.components.set(component)
+        light.look(at: [0, -1, 0], from: [0, 5, 0], relativeTo: nil)
+        return light
+    }
+
+    // MARK: - Intensity visual update (called when speed changes)
 
     private func applyIntensity(_ intensity: IntensityLevel, to content: RealityViewContent) {
-        // Boost scene brightness/opacity as speed increases
-        let opacity = Double(0.6 + intensity.visualIntensity * 0.4)
+        let opacity = Double(0.65 + intensity.visualIntensity * 0.35)
         for entity in content.entities {
             entity.components[OpacityComponent.self] = OpacityComponent(opacity: opacity)
         }

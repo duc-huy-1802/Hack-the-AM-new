@@ -16,6 +16,6 @@ struct XRAdaptiveFitnessApp: App {
             ImmersiveView()
                 .environmentObject(viewModel)
         }
-        .immersionStyle(selection: .constant(.mixed), in: .mixed)
+        .immersionStyle(selection: .constant(.full), in: .full)
     }
 }
