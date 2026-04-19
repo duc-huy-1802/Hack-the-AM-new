@@ -7,27 +7,73 @@ struct SessionView: View {
     var body: some View {
         VStack(spacing: 20) {
 
-            // Live intensity status
-            HStack(spacing: 12) {
-                Text(viewModel.intensity.icon).font(.title)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(viewModel.intensity.rawValue)
-                        .font(.title2.bold())
-                        .foregroundStyle(viewModel.intensity.color)
-                    Text(viewModel.intensity.speedRange)
-                        .font(.caption).foregroundStyle(.secondary)
-                }
+            // Top bar: environment + timer
+            HStack {
+                Label(viewModel.selectedEnvironment.rawValue, systemImage: "leaf.fill")
+                    .font(.headline)
+                    .foregroundStyle(.green)
                 Spacer()
-                Text(String(format: "%.1f km/h", viewModel.currentSpeed))
-                    .font(.title.monospacedDigit())
+                HStack(spacing: 4) {
+                    Image(systemName: "timer")
+                    Text(formattedTime)
+                        .monospacedDigit()
+                }
+                .font(.headline)
+                .foregroundStyle(.secondary)
             }
-            .padding()
-            .background(.regularMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .padding(.horizontal, 4)
 
-            // Speed slider (demo / manual override)
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Speed").font(.headline)
+            Divider()
+
+            // Speed ring
+            ZStack {
+                // Track
+                Circle()
+                    .stroke(.white.opacity(0.1), lineWidth: 14)
+                    .frame(width: 160, height: 160)
+
+                // Fill
+                Circle()
+                    .trim(from: 0, to: CGFloat(viewModel.currentSpeed / 15.0))
+                    .stroke(
+                        AngularGradient(
+                            colors: [.green, .yellow, .orange, .red],
+                            center: .center,
+                            startAngle: .degrees(-90),
+                            endAngle: .degrees(270)
+                        ),
+                        style: StrokeStyle(lineWidth: 14, lineCap: .round)
+                    )
+                    .frame(width: 160, height: 160)
+                    .rotationEffect(.degrees(-90))
+                    .animation(.easeInOut(duration: 0.4), value: viewModel.currentSpeed)
+
+                // Center text
+                VStack(spacing: 2) {
+                    Text(viewModel.intensity.icon)
+                        .font(.title2)
+                    Text(String(format: "%.1f", viewModel.currentSpeed))
+                        .font(.system(size: 32, weight: .bold, design: .rounded).monospacedDigit())
+                    Text("km/h")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            // Intensity label
+            HStack(spacing: 6) {
+                Text(viewModel.intensity.rawValue)
+                    .font(.title3.bold())
+                    .foregroundStyle(viewModel.intensity.color)
+                Text("·")
+                    .foregroundStyle(.secondary)
+                Text(viewModel.intensity.speedRange)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+
+            // Speed slider
+            VStack(spacing: 6) {
                 Slider(
                     value: Binding(
                         get: { viewModel.currentSpeed },
@@ -39,11 +85,13 @@ struct SessionView: View {
                 .tint(viewModel.intensity.color)
 
                 HStack {
-                    Text("0").font(.caption).foregroundStyle(.secondary)
+                    Text("Slow").font(.caption2).foregroundStyle(.secondary)
                     Spacer()
-                    Text("15 km/h").font(.caption).foregroundStyle(.secondary)
+                    Text("Fast").font(.caption2).foregroundStyle(.secondary)
                 }
             }
+
+            Divider()
 
             // End session
             Button(role: .destructive) {
@@ -55,9 +103,16 @@ struct SessionView: View {
             } label: {
                 Label("End Session", systemImage: "stop.fill")
                     .frame(maxWidth: .infinity)
-                    .padding()
+                    .padding(.vertical, 4)
             }
             .buttonStyle(.bordered)
         }
+        .padding()
+    }
+
+    private var formattedTime: String {
+        let m = Int(viewModel.elapsedTime) / 60
+        let s = Int(viewModel.elapsedTime) % 60
+        return String(format: "%02d:%02d", m, s)
     }
 }

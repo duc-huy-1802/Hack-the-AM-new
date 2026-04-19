@@ -1,11 +1,23 @@
 import SwiftUI
 import RealityKit
 
-/// Full-immersion XR forest.
-/// Trees are scattered naturally (not in rings) so walking in ANY direction
-/// always keeps you surrounded by forest. Vision Pro tracks real movement.
+/// Lollipop forest — candy-coloured trees, dreamy purple sky, soft lavender ground.
 struct ImmersiveView: View {
     @EnvironmentObject var viewModel: FitnessSessionViewModel
+
+    // Candy palette — picked per tree via pseudo-random
+    private let candyColors: [(Float, Float, Float)] = [
+        (1.00, 0.20, 0.55),   // hot pink
+        (0.88, 0.08, 0.72),   // magenta
+        (0.62, 0.08, 0.92),   // deep purple
+        (1.00, 0.42, 0.28),   // coral
+        (0.18, 0.88, 0.62),   // mint
+        (1.00, 0.90, 0.15),   // lemon
+        (0.40, 0.65, 1.00),   // sky blue
+        (0.85, 0.55, 1.00),   // lavender
+        (1.00, 0.55, 0.80),   // baby pink
+        (0.30, 1.00, 0.80),   // aqua
+    ]
 
     var body: some View {
         RealityView { content in
@@ -15,49 +27,44 @@ struct ImmersiveView: View {
         }
     }
 
-    // MARK: - Forest Builder
+    // MARK: - Forest
 
     private func buildForest() -> Entity {
         let root = Entity()
         root.addChild(makeSkyDome())
         root.addChild(makeGround())
 
-        // 180 trees scattered randomly from 1.8m – 20m in every direction.
-        // sqrt distribution = uniform coverage (avoids crowding near center)
+        // 180 lollipop trees scattered randomly from 1.8m to 20m
         for i in 0..<180 {
             let s = i * 23 + 7
             let angle = pseudoRandom(s) * .pi * 2
-            let minDist: Float = 1.8
-            let maxDist: Float = 20.0
-            let dist = minDist + sqrt(pseudoRandom(s + 1)) * (maxDist - minDist)
+            let dist  = 1.8 + sqrt(pseudoRandom(s + 1)) * 18.2
 
             let x = cos(angle) * dist
             let z = sin(angle) * dist
 
-            // Trees get taller + wider the further away (more imposing forest wall)
-            let trunkHeight = 1.6 + pseudoRandom(s + 2) * 1.8 + dist * 0.08
-            let canopyRadius = 0.5 + pseudoRandom(s + 3) * 0.9 + dist * 0.02
+            let trunkHeight   = 1.4 + pseudoRandom(s + 2) * 2.0
+            let candyRadius   = 0.45 + pseudoRandom(s + 3) * 0.75
+            let fogOpacity: Float = dist < 10 ? 1.0 : max(0.35, 1.0 - (dist - 10) / 12.0)
 
-            // Distance fog: trees beyond 10m fade slightly
-            let fogOpacity: Float = dist < 10 ? 1.0 : max(0.4, 1.0 - (dist - 10) / 14.0)
-
-            root.addChild(makeTree(
+            root.addChild(makeLollipop(
                 at: [x, -1.5, z],
-                trunkHeight: trunkHeight,
-                canopyRadius: canopyRadius,
+                stickHeight: trunkHeight,
+                candyRadius: candyRadius,
                 seed: s,
                 opacity: fogOpacity
             ))
         }
 
-        // Dense undergrowth 1–5m from user — makes you feel immediately inside forest
+        // Colourful puffball bushes close to user (1–5m)
         for i in 0..<80 {
             let s = i * 41 + 999
             let angle = pseudoRandom(s) * .pi * 2
-            let dist: Float = 1.0 + pseudoRandom(s + 1) * 4.5
-            let x = cos(angle) * dist
-            let z = sin(angle) * dist
-            root.addChild(makeBush(at: [x, -1.38, z], seed: s))
+            let dist: Float = 1.0 + pseudoRandom(s + 1) * 4.0
+            root.addChild(makePuffball(
+                at: [cos(angle) * dist, -1.38, sin(angle) * dist],
+                seed: s
+            ))
         }
 
         return root
@@ -65,20 +72,21 @@ struct ImmersiveView: View {
 
     // MARK: - Components
 
+    /// Purple-pink sky — feels like a magical candy world
     private func makeSkyDome() -> Entity {
         var mat = UnlitMaterial()
-        // Dark forest canopy green — not bright blue (you're under tree cover)
-        mat.color = .init(tint: .init(red: 0.06, green: 0.18, blue: 0.06, alpha: 1))
+        mat.color = .init(tint: .init(red: 0.28, green: 0.04, blue: 0.38, alpha: 1))
         let dome = ModelEntity(mesh: .generateSphere(radius: 50), materials: [mat])
-        dome.scale = SIMD3<Float>(-1, 1, 1)  // flip inside-out
+        dome.scale = SIMD3<Float>(-1, 1, 1)
         return dome
     }
 
+    /// Soft lavender ground
     private func makeGround() -> Entity {
         let ground = ModelEntity(
             mesh: .generatePlane(width: 70, depth: 70),
             materials: [SimpleMaterial(
-                color: .init(red: 0.16, green: 0.28, blue: 0.09, alpha: 1),
+                color: .init(red: 0.78, green: 0.60, blue: 0.90, alpha: 1),
                 isMetallic: false
             )]
         )
@@ -86,74 +94,79 @@ struct ImmersiveView: View {
         return ground
     }
 
-    private func makeTree(
+    /// A lollipop tree: thin white stick + big candy sphere on top
+    private func makeLollipop(
         at position: SIMD3<Float>,
-        trunkHeight: Float,
-        canopyRadius: Float,
+        stickHeight: Float,
+        candyRadius: Float,
         seed: Int,
         opacity: Float
     ) -> Entity {
         let tree = Entity()
 
-        // Vary trunk colour slightly per tree
-        let tv = pseudoRandom(seed + 100) * 0.07
-        let trunk = ModelEntity(
-            mesh: .generateCylinder(height: trunkHeight, radius: 0.08 + pseudoRandom(seed + 200) * 0.07),
+        // White/cream stick (lollipop handle)
+        let stick = ModelEntity(
+            mesh: .generateCylinder(height: stickHeight, radius: 0.04),
             materials: [SimpleMaterial(
-                color: .init(red: 0.26 + tv, green: 0.15 + tv, blue: 0.06, alpha: 1),
+                color: .init(red: 0.95, green: 0.92, blue: 0.95, alpha: 1),
                 isMetallic: false
             )]
         )
-        trunk.position = position + SIMD3(0, trunkHeight / 2, 0)
+        stick.position = position + SIMD3(0, stickHeight / 2, 0)
 
-        // Vary canopy green
-        let gv = pseudoRandom(seed + 300) * 0.14
-        let canopy = ModelEntity(
-            mesh: .generateSphere(radius: canopyRadius),
+        // Candy sphere — pick colour from palette
+        let (r, g, b) = pickCandy(seed: seed)
+        let candy = ModelEntity(
+            mesh: .generateSphere(radius: candyRadius),
             materials: [SimpleMaterial(
-                color: .init(red: 0.04 + gv * 0.4, green: 0.28 + gv, blue: 0.04, alpha: 1),
+                color: .init(red: CGFloat(r), green: CGFloat(g), blue: CGFloat(b), alpha: 1),
                 isMetallic: false
             )]
         )
-        canopy.position = [0, trunkHeight / 2 + canopyRadius * 0.42, 0]
-        trunk.addChild(canopy)
-        tree.addChild(trunk)
+        // Squash slightly so it looks like a real lollipop candy
+        candy.scale = SIMD3<Float>(1.0, 0.82, 1.0)
+        candy.position = [0, stickHeight / 2 + candyRadius * 0.55, 0]
+        stick.addChild(candy)
+        tree.addChild(stick)
 
-        // Distance fog
         if opacity < 1.0 {
             tree.components[OpacityComponent.self] = OpacityComponent(opacity: opacity)
         }
-
         return tree
     }
 
-    private func makeBush(at position: SIMD3<Float>, seed: Int) -> Entity {
-        let size: Float = 0.10 + pseudoRandom(seed) * 0.25
-        let gv = pseudoRandom(seed + 1) * 0.10
-        let bush = ModelEntity(
+    /// Small colourful puffball near the ground
+    private func makePuffball(at position: SIMD3<Float>, seed: Int) -> Entity {
+        let size: Float = 0.10 + pseudoRandom(seed) * 0.22
+        let (r, g, b) = pickCandy(seed: seed + 77)
+        let ball = ModelEntity(
             mesh: .generateSphere(radius: size),
             materials: [SimpleMaterial(
-                color: .init(red: 0.05, green: 0.22 + gv, blue: 0.04, alpha: 1),
+                color: .init(red: CGFloat(r), green: CGFloat(g), blue: CGFloat(b), alpha: 1),
                 isMetallic: false
             )]
         )
-        bush.position = position
-        return bush
+        ball.position = position
+        return ball
     }
 
-    // MARK: - Deterministic pseudo-random (no import needed, no seed state)
+    // MARK: - Helpers
+
+    private func pickCandy(seed: Int) -> (Float, Float, Float) {
+        let idx = Int(pseudoRandom(seed + 500) * Float(candyColors.count)) % candyColors.count
+        return candyColors[idx]
+    }
 
     private func pseudoRandom(_ n: Int) -> Float {
         let x = sin(Float(n) * 127.1 + 311.7) * 43758.5453
-        return x - floor(x)  // always 0.0 – 1.0
+        return x - floor(x)
     }
 
-    // MARK: - Intensity visual update
+    // MARK: - Intensity
 
     private func applyIntensity(_ intensity: IntensityLevel, to content: RealityViewContent) {
         let boost: Float = 0.7 + intensity.visualIntensity * 0.3
         for entity in content.entities {
-            // Only override entities that don't already have distance fog
             if entity.components[OpacityComponent.self] == nil {
                 entity.components[OpacityComponent.self] = OpacityComponent(opacity: boost)
             }
