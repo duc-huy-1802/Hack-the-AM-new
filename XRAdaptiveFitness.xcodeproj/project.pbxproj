@@ -1,0 +1,326 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10000000000000000000001 /* XRAdaptiveFitnessApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000002 /* XRAdaptiveFitnessApp.swift */; };
+		A10000000000000000000003 /* FitnessEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000004 /* FitnessEnvironment.swift */; };
+		A10000000000000000000005 /* IntensityLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000006 /* IntensityLevel.swift */; };
+		A10000000000000000000007 /* FitnessSessionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000008 /* FitnessSessionViewModel.swift */; };
+		A10000000000000000000009 /* SpatialAudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000A /* SpatialAudioManager.swift */; };
+		A1000000000000000000000B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000C /* ContentView.swift */; };
+		A1000000000000000000000D /* EnvironmentPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000E /* EnvironmentPickerView.swift */; };
+		A1000000000000000000000F /* SessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000010 /* SessionView.swift */; };
+		A10000000000000000000011 /* ImmersiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000012 /* ImmersiveView.swift */; };
+		A10000000000000000000013 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000014 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A10000000000000000000002 /* XRAdaptiveFitnessApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XRAdaptiveFitnessApp.swift; sourceTree = "<group>"; };
+		A10000000000000000000004 /* FitnessEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitnessEnvironment.swift; sourceTree = "<group>"; };
+		A10000000000000000000006 /* IntensityLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntensityLevel.swift; sourceTree = "<group>"; };
+		A10000000000000000000008 /* FitnessSessionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitnessSessionViewModel.swift; sourceTree = "<group>"; };
+		A1000000000000000000000A /* SpatialAudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpatialAudioManager.swift; sourceTree = "<group>"; };
+		A1000000000000000000000C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A1000000000000000000000E /* EnvironmentPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentPickerView.swift; sourceTree = "<group>"; };
+		A10000000000000000000010 /* SessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionView.swift; sourceTree = "<group>"; };
+		A10000000000000000000012 /* ImmersiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveView.swift; sourceTree = "<group>"; };
+		A10000000000000000000014 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A10000000000000000000015 /* XRAdaptiveFitness.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XRAdaptiveFitness.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A10000000000000000000016 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A1000000000000000000001E /* root */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000018 /* XRAdaptiveFitness */,
+				A10000000000000000000017 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A10000000000000000000017 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000015 /* XRAdaptiveFitness.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A10000000000000000000018 /* XRAdaptiveFitness */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000019 /* App */,
+				A1000000000000000000001A /* Models */,
+				A1000000000000000000001B /* ViewModels */,
+				A1000000000000000000001C /* Audio */,
+				A1000000000000000000001D /* Views */,
+				A10000000000000000000012 /* ImmersiveView.swift */,
+				A10000000000000000000014 /* Assets.xcassets */,
+			);
+			path = XRAdaptiveFitness;
+			sourceTree = "<group>";
+		};
+		A10000000000000000000019 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000002 /* XRAdaptiveFitnessApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		A1000000000000000000001A /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000004 /* FitnessEnvironment.swift */,
+				A10000000000000000000006 /* IntensityLevel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A1000000000000000000001B /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000008 /* FitnessSessionViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		A1000000000000000000001C /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				A1000000000000000000000A /* SpatialAudioManager.swift */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
+		A1000000000000000000001D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A1000000000000000000000C /* ContentView.swift */,
+				A1000000000000000000000E /* EnvironmentPickerView.swift */,
+				A10000000000000000000010 /* SessionView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A1000000000000000000001F /* XRAdaptiveFitness */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A10000000000000000000020 /* Build configuration list for PBXNativeTarget "XRAdaptiveFitness" */;
+			buildPhases = (
+				A10000000000000000000021 /* Sources */,
+				A10000000000000000000016 /* Frameworks */,
+				A10000000000000000000022 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = XRAdaptiveFitness;
+			productName = XRAdaptiveFitness;
+			productReference = A10000000000000000000015 /* XRAdaptiveFitness.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A10000000000000000000023 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1540;
+				TargetAttributes = {
+					A1000000000000000000001F = {
+						CreatedOnToolsVersion = 15.4;
+					};
+				};
+			};
+			buildConfigurationList = A10000000000000000000024 /* Build configuration list for PBXProject "XRAdaptiveFitness" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A1000000000000000000001E;
+			productRefGroup = A10000000000000000000017 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A1000000000000000000001F /* XRAdaptiveFitness */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A10000000000000000000022 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000000000000000000013 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A10000000000000000000021 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000000000000000000001 /* XRAdaptiveFitnessApp.swift in Sources */,
+				A10000000000000000000003 /* FitnessEnvironment.swift in Sources */,
+				A10000000000000000000005 /* IntensityLevel.swift in Sources */,
+				A10000000000000000000007 /* FitnessSessionViewModel.swift in Sources */,
+				A10000000000000000000009 /* SpatialAudioManager.swift in Sources */,
+				A1000000000000000000000B /* ContentView.swift in Sources */,
+				A1000000000000000000000D /* EnvironmentPickerView.swift in Sources */,
+				A1000000000000000000000F /* SessionView.swift in Sources */,
+				A10000000000000000000011 /* ImmersiveView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A10000000000000000000025 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = xros;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A10000000000000000000026 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_FAST_MATH = YES;
+				SDKROOT = xros;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		A10000000000000000000027 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableDescription = "XR Adaptive Fitness";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hackathon.XRAdaptiveFitness;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 7;
+				XROS_DEPLOYMENT_TARGET = 1.0;
+			};
+			name = Debug;
+		};
+		A10000000000000000000028 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableDescription = "XR Adaptive Fitness";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hackathon.XRAdaptiveFitness;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 7;
+				XROS_DEPLOYMENT_TARGET = 1.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A10000000000000000000024 /* Build configuration list for PBXProject "XRAdaptiveFitness" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A10000000000000000000025 /* Debug */,
+				A10000000000000000000026 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A10000000000000000000020 /* Build configuration list for PBXNativeTarget "XRAdaptiveFitness" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A10000000000000000000027 /* Debug */,
+				A10000000000000000000028 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A10000000000000000000023 /* Project object */;
+}
