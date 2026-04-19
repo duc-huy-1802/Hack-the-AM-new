@@ -3,87 +3,93 @@ import SwiftUI
 struct SessionView: View {
     @EnvironmentObject var viewModel: FitnessSessionViewModel
     @Environment(\.dismissImmersiveSpace) var dismissImmersiveSpace
+    @Binding var isCollapsed: Bool
 
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 16) {
 
-            // Top bar: environment + timer
+            // Header row
             HStack {
                 Label(viewModel.selectedEnvironment.rawValue, systemImage: "leaf.fill")
-                    .font(.headline)
-                    .foregroundStyle(.green)
+                    .font(.headline).foregroundStyle(.purple)
                 Spacer()
-                HStack(spacing: 4) {
-                    Image(systemName: "timer")
-                    Text(formattedTime)
-                        .monospacedDigit()
+                Text(formattedTime)
+                    .font(.headline.monospacedDigit()).foregroundStyle(.secondary)
+                // Collapse button — hides this panel so the forest is fully visible
+                Button {
+                    withAnimation(.easeInOut(duration: 0.3)) { isCollapsed = true }
+                } label: {
+                    Image(systemName: "arrow.down.right.and.arrow.up.left")
+                        .font(.headline)
                 }
-                .font(.headline)
+                .buttonStyle(.plain)
                 .foregroundStyle(.secondary)
+                .padding(.leading, 8)
             }
-            .padding(.horizontal, 4)
 
             Divider()
 
             // Speed ring
             ZStack {
-                // Track
                 Circle()
-                    .stroke(.white.opacity(0.1), lineWidth: 14)
-                    .frame(width: 160, height: 160)
-
-                // Fill
+                    .stroke(.white.opacity(0.08), lineWidth: 14)
+                    .frame(width: 150, height: 150)
                 Circle()
                     .trim(from: 0, to: CGFloat(viewModel.currentSpeed / 15.0))
                     .stroke(
                         AngularGradient(
-                            colors: [.green, .yellow, .orange, .red],
+                            colors: [.mint, .yellow, .orange, .pink, .purple],
                             center: .center,
                             startAngle: .degrees(-90),
                             endAngle: .degrees(270)
                         ),
                         style: StrokeStyle(lineWidth: 14, lineCap: .round)
                     )
-                    .frame(width: 160, height: 160)
+                    .frame(width: 150, height: 150)
                     .rotationEffect(.degrees(-90))
                     .animation(.easeInOut(duration: 0.4), value: viewModel.currentSpeed)
 
-                // Center text
                 VStack(spacing: 2) {
-                    Text(viewModel.intensity.icon)
-                        .font(.title2)
+                    Text(viewModel.intensity.icon).font(.title2)
                     Text(String(format: "%.1f", viewModel.currentSpeed))
-                        .font(.system(size: 32, weight: .bold, design: .rounded).monospacedDigit())
-                    Text("km/h")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .font(.system(size: 30, weight: .bold, design: .rounded).monospacedDigit())
+                    Text("km/h").font(.caption).foregroundStyle(.secondary)
                 }
             }
 
-            // Intensity label
-            HStack(spacing: 6) {
-                Text(viewModel.intensity.rawValue)
-                    .font(.title3.bold())
-                    .foregroundStyle(viewModel.intensity.color)
-                Text("·")
-                    .foregroundStyle(.secondary)
-                Text(viewModel.intensity.speedRange)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+            // Intensity + distance
+            HStack(spacing: 12) {
+                VStack(spacing: 2) {
+                    Text(viewModel.intensity.rawValue)
+                        .font(.title3.bold()).foregroundStyle(viewModel.intensity.color)
+                    Text(viewModel.intensity.speedRange)
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+                Divider().frame(height: 30)
+                VStack(spacing: 2) {
+                    Text(String(format: "%.0fm", viewModel.sessionMetres))
+                        .font(.title3.bold()).foregroundStyle(.purple)
+                    Text("this session")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+                Divider().frame(height: 30)
+                VStack(spacing: 2) {
+                    Text(String(format: "%.0fm", viewModel.totalMetres))
+                        .font(.title3.bold()).foregroundStyle(.pink)
+                    Text("total").font(.caption).foregroundStyle(.secondary)
+                }
             }
 
             // Speed slider
-            VStack(spacing: 6) {
+            VStack(spacing: 4) {
                 Slider(
                     value: Binding(
                         get: { viewModel.currentSpeed },
                         set: { viewModel.setSpeed($0) }
                     ),
-                    in: 0...15,
-                    step: 0.5
+                    in: 0...15, step: 0.5
                 )
                 .tint(viewModel.intensity.color)
-
                 HStack {
                     Text("Slow").font(.caption2).foregroundStyle(.secondary)
                     Spacer()
@@ -99,11 +105,11 @@ struct SessionView: View {
                     viewModel.stopSession()
                     await dismissImmersiveSpace()
                     viewModel.isImmersiveSpaceOpen = false
+                    isCollapsed = false
                 }
             } label: {
                 Label("End Session", systemImage: "stop.fill")
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 4)
+                    .frame(maxWidth: .infinity).padding(.vertical, 4)
             }
             .buttonStyle(.bordered)
         }

@@ -7,13 +7,9 @@ enum FitnessEnvironment: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    var isAvailable: Bool {
-        self == .forest
-    }
-
     var icon: String {
         switch self {
-        case .forest: return "🌲"
+        case .forest: return "🍭"
         case .beach:  return "🌊"
         case .city:   return "🌆"
         }
@@ -21,13 +17,21 @@ enum FitnessEnvironment: String, CaseIterable, Identifiable {
 
     var description: String {
         switch self {
-        case .forest: return "Dense nature environment"
-        case .beach:  return "Ocean shoreline environment"
-        case .city:   return "Urban marathon environment"
+        case .forest: return "Candy lollipop world"
+        case .beach:  return "Ocean shoreline"
+        case .city:   return "Urban marathon"
         }
     }
 
-    // Base looping audio files — add these .mp3s to your Xcode bundle
+    /// nil = always unlocked. Otherwise, cumulative metres required.
+    var unlockMetres: Double? {
+        switch self {
+        case .forest: return nil
+        case .beach:  return 50
+        case .city:   return 200
+        }
+    }
+
     var baseAudioFiles: [String] {
         switch self {
         case .forest: return ["forest_birds", "forest_wind", "forest_leaves"]
@@ -36,7 +40,6 @@ enum FitnessEnvironment: String, CaseIterable, Identifiable {
         }
     }
 
-    // Extra layer played at fast intensity
     var intensityAudioFile: String {
         switch self {
         case .forest: return "forest_intensity"
