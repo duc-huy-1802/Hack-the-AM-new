@@ -1,9 +1,5 @@
 {
-  "images" : [
-    {
-      "idiom" : "reality"
-    }
-  ],
+  "images" : [],
   "info" : {
     "author" : "xcode",
     "version" : 1

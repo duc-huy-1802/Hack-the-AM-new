@@ -20,25 +20,21 @@ struct ImmersiveView: View {
         let root = Entity()
         root.addChild(makeSkyDome())
         root.addChild(makeGround())
-        root.addChild(makeTreeRing(count: 8,  radius: 4,  trunkHeight: 2.0, canopySize: 0.8))  // inner
-        root.addChild(makeTreeRing(count: 14, radius: 8,  trunkHeight: 3.0, canopySize: 1.2))  // middle
-        root.addChild(makeTreeRing(count: 20, radius: 14, trunkHeight: 4.5, canopySize: 1.8))  // outer
+        root.addChild(makeTreeRing(count: 8,  radius: 4,  trunkHeight: 2.0, canopySize: 0.8))
+        root.addChild(makeTreeRing(count: 14, radius: 8,  trunkHeight: 3.0, canopySize: 1.2))
+        root.addChild(makeTreeRing(count: 20, radius: 14, trunkHeight: 4.5, canopySize: 1.8))
         root.addChild(makeBushRing(count: 12, radius: 3))
-        root.addChild(makeAmbientLight())
         return root
     }
 
     // MARK: - Scene Components
 
-    /// Large inverted sphere — gives the forest a sky/canopy color overhead
+    /// Large inverted sphere — gives the forest a green sky/canopy feel
     private func makeSkyDome() -> Entity {
         var material = UnlitMaterial()
         material.color = .init(tint: .init(red: 0.15, green: 0.35, blue: 0.15, alpha: 1))
-
         let dome = ModelEntity(mesh: .generateSphere(radius: 50), materials: [material])
-        // Flip the sphere inside-out so the texture faces inward
         dome.scale = SIMD3<Float>(-1, 1, 1)
-        dome.position = [0, 0, 0]
         return dome
     }
 
@@ -51,17 +47,15 @@ struct ImmersiveView: View {
                 isMetallic: false
             )]
         )
-        // Position at floor level — adjust this value if the floor looks too high/low
         ground.position = [0, -1.5, 0]
         return ground
     }
 
-    /// Generates a ring of trees at a given radius
+    /// Ring of trees at a given radius
     private func makeTreeRing(count: Int, radius: Float, trunkHeight: Float, canopySize: Float) -> Entity {
         let ring = Entity()
         for i in 0..<count {
             let angle = Float(i) * (.pi * 2 / Float(count))
-            // Slight random-feeling offset using index math (no random seed needed)
             let radiusVariation = radius + Float(i % 3) * 0.6 - 0.3
             let x = cos(angle) * radiusVariation
             let z = sin(angle) * radiusVariation
@@ -79,7 +73,10 @@ struct ImmersiveView: View {
 
         let trunk = ModelEntity(
             mesh: .generateCylinder(height: trunkHeight, radius: 0.12),
-            materials: [SimpleMaterial(color: .init(red: 0.35, green: 0.22, blue: 0.10, alpha: 1), isMetallic: false)]
+            materials: [SimpleMaterial(
+                color: .init(red: 0.35, green: 0.22, blue: 0.10, alpha: 1),
+                isMetallic: false
+            )]
         )
         trunk.position = position + SIMD3(0, trunkHeight / 2, 0)
 
@@ -96,7 +93,7 @@ struct ImmersiveView: View {
         return tree
     }
 
-    /// Low bushes scattered near the user for depth
+    /// Low bushes near the user for depth
     private func makeBushRing(count: Int, radius: Float) -> Entity {
         let ring = Entity()
         for i in 0..<count {
@@ -115,21 +112,11 @@ struct ImmersiveView: View {
         return ring
     }
 
-    /// Soft green ambient light — makes the forest feel lit from above
-    private func makeAmbientLight() -> Entity {
-        let light = Entity()
-        var component = DirectionalLightComponent()
-        component.color     = .init(red: 0.6, green: 0.9, blue: 0.5, alpha: 1)
-        component.intensity = 800
-        light.components.set(component)
-        light.look(at: [0, -1, 0], from: [0, 5, 0], relativeTo: nil)
-        return light
-    }
-
-    // MARK: - Intensity visual update (called when speed changes)
+    // MARK: - Intensity visual update
 
     private func applyIntensity(_ intensity: IntensityLevel, to content: RealityViewContent) {
-        let opacity = Double(0.65 + intensity.visualIntensity * 0.35)
+        // Fix: OpacityComponent takes Float, not Double
+        let opacity: Float = 0.65 + intensity.visualIntensity * 0.35
         for entity in content.entities {
             entity.components[OpacityComponent.self] = OpacityComponent(opacity: opacity)
         }
